@@ -24,8 +24,6 @@ Install	the	open-source	VirtualBox	hypervisor	https://www.virtualbox.org/wiki/Do
 Mininet VM Image
 http://www.nas.ewi.tudelft.nl/tmp/Mininet-VM.ova
 
-Ryu
-
 Ryu	has	already	been	installed	in	the	directory	`ryu`	in	the	home	folder	of	your	VM.	You	are	encouraged	to	consult	the	additional	documentation	about	Ryu	at	http://ryu.readthedocs.org/	
 
 #Refferences

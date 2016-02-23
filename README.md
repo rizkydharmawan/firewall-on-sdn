@@ -1,0 +1,2 @@
+# firewall-on-sdn
+I implement Firewall on SDN.  I write some controller applications that work as Firewall and analyze incoming packets for each host. This project is also able to implement connection tracking mechanism. For this project I use mininet together with the  Ryu controller and OpenFlow framework to implement and to simulate firewall on SDN.  The applications are tested on local machine with Firewall rule-set. I use Wireshark to monitor data communication in the hosts

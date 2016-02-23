@@ -1,0 +1,83 @@
+#Creating the topology in miniedit.py
+sudo ~./ryu/miniedit.py
+
+#Creating the topology
+sudo mn --topo linear,3,2 --mac --switch ovsk --controller remote –x
+
+# Create Xterm for Controller 0 (c0)
+mininet> xterm c0
+
+# Set the version of Openflow13 in each switch
+ovs-vsctl set Bridge s1 protocols=OpenFlow13
+ovs-vsctl set Bridge s2 protocols=OpenFlow13
+ovs-vsctl set Bridge s3 protocols=OpenFlow13
+
+# Set VLAN ID in h1s1-eth0
+ip addr del 10.0.0.1/8 dev h1s1-eth0
+ip link add link h1s1-eth0 name h1s1-eth0.3 type vlan id 3
+ip addr add 10.0.0.1/8 dev h1s1-eth0.3
+ip link set dev h1s1-eth0.3 up
+# Set VLAN ID in h2s1-eth0
+ip addr del 10.0.0.4/8 dev h2s1-eth0
+ip link add link h2s1-eth0 name h1s1-eth0.2 type vlan id 2
+ip addr add 10.0.0.4/8 dev h2s1-eth0.2
+ip link set dev h2s1-eth0.2 up
+# Set VLAN ID in h1s2-eth0
+ip addr del 10.0.0.2/8 dev h1s2-eth0
+ip link add link h1s2-eth0 name h1s2-eth0.3 type vlan id 3
+ip addr add 10.0.0.2/8 dev h1s2-eth0.3
+ip link set dev h1s2-eth0.3 up
+# Set VLAN ID in h2s2-eth0
+ip addr del 10.0.0.5/8 dev h2s2-eth0
+ip link add link h2s2-eth0 name h2s2-eth0.2 type vlan id 2
+ip addr add 10.0.0.5/8 dev h2s2-eth0.2
+ip link set dev h2s2-eth0.2 up
+# Set VLAN ID in h1s3-eth0
+ip addr del 10.0.0.3/8 dev h1s3-eth0
+ip link add link h1s3-eth0 name h1s3-eth0.3 type vlan id 3
+ip addr add 10.0.0.3/8 dev h1s3-eth0.3
+ip link set dev h1s3-eth0.3 up
+# Set VLAN ID in h2s3-eth0
+ip addr del 10.0.0.6/8 dev h2s3-eth0
+ip link add link h2s3-eth0 name h2s3-eth0.2 type vlan id 2
+ip addr add 10.0.0.6/8 dev h2s3-eth0.2
+ip link set dev h2s3-eth0.2 up
+
+#Start rest_firewall
+ryu-manager ryu.app.rest_firewall
+
+#Enable firewall in s1,s2,s3
+curl -X PUT http://localhost:8080/firewall/module/enable/0000000000000001
+curl -X PUT http://localhost:8080/firewall/module/enable/0000000000000002
+curl -X PUT http://localhost:8080/firewall/module/enable/0000000000000003
+curl http://localhost:8080/firewall/module/status
+
+#add rule for host h1s1, VLAN ID 3, and switch 1 (00000000000000001)
+curl -X POST -d '{"nw_src": "10.0.0.1/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000001/3
+curl -X POST -d '{"nw_dst": "10.0.0.1/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000001/3
+
+#add rule for host h1s2, VLAN ID 3, and switch 2 (00000000000000002)
+curl -X POST -d '{"nw_src": "10.0.0.2/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000002/3
+curl -X POST -d '{"nw_dst": "10.0.0.2/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000002/3
+
+#add rule for host h1s3, VLAN ID 3, and switch 3 (00000000000000003)
+curl -X POST -d '{"nw_src": "10.0.0.3/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000003/3
+curl -X POST -d '{"nw_dst": "10.0.0.3/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000003/3
+
+#add rule for host h2s1, VLAN ID 2, and switch 1 (00000000000000001)
+curl -X POST -d '{"nw_src": "10.0.0.4/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000001/2
+curl -X POST -d '{"nw_dst": "10.0.0.4/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000001/2
+
+#add rule for host h2s2, VLAN ID 2, and switch 2 (00000000000000002)
+curl -X POST -d '{"nw_src": "10.0.0.5/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000002/2
+curl -X POST -d '{"nw_dst": "10.0.0.5/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000002/2
+
+#add rule for host h2s3, VLAN ID 2, and switch 3 (00000000000000003)
+curl -X POST -d '{"nw_src": "10.0.0.6/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000003/2
+curl -X POST -d '{"nw_dst": "10.0.0.6/8", "nw_proto": "ICMP"}' http://localhost:8080/firewall/rules/0000000000000003/2
+
+#Confirm the rules in each switch
+Curl http://localhost:8080/firewall/rules/0000000000000001/all
+Curl http://localhost:8080/firewall/rules/0000000000000002/all
+Curl http://localhost:8080/firewall/rules/0000000000000003/all
+

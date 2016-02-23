@@ -26,6 +26,11 @@ http://www.nas.ewi.tudelft.nl/tmp/Mininet-VM.ova
 
 Ryu	has	already	been	installed	in	the	directory	`ryu`	in	the	home	folder	of	your	VM.	You	are	encouraged	to	consult	the	additional	documentation	about	Ryu	at	http://ryu.readthedocs.org/	
 
+#Topology
+![alt tag](https://cloud.githubusercontent.com/assets/17114181/13259851/7834fe16-da59-11e5-891b-94b53b5b9d26.JPG)
+
+This topology consists of 6 host, 3 switches, and 1 controller. h1s1 and h2s1 connect to switch1 (s1), h1s2 and h2s2 connect to switch2 (s2), and h1s3 and h2s3 connect to switch3 (s3). I create the network segmentation into 2 parts (VLAN ID=3 and VLAN ID=2). Ryu application can be run via command-line tool called ryu-manager, I use OFP version 1.3 for each switch (s1,s2,and s3).
+
 #Refferences
 Mininet website.Available: http://mininet.org/overview/ 
 
